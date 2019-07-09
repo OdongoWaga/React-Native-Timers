@@ -1,15 +1,62 @@
-import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 
 import { millisecondsToHuman } from '../utils/TimerUtils';
 import TimerButton from './TimerButton';
 
-export default class Timer extends React.Component {
+export default class Timer extends Component {
+  static propTypes = {
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    project: PropTypes.string.isRequired,
+    elapsed: PropTypes.number.isRequired,
+    isRunning: PropTypes.bool.isRequired,
+    onEditPress: PropTypes.func.isRequired,
+    onRemovePress: PropTypes.func.isRequired,
+    onStartPress: PropTypes.func.isRequired,
+    onStopPress: PropTypes.func.isRequired,
+  };
+
+  handleStartPress = () => {
+    const { id, onStartPress } = this.props;
+
+    onStartPress(id);
+  };
+
+  handleStopPress = () => {
+    const { id, onStopPress } = this.props;
+
+    onStopPress(id);
+  };
+
   handleRemovePress = () => {
     const { id, onRemovePress } = this.props;
 
     onRemovePress(id);
   };
+
+  renderActionButton() {
+    const { isRunning } = this.props;
+
+    if (isRunning) {
+      return (
+        <TimerButton
+          color="#DB2828"
+          title="Stop"
+          onPress={this.handleStopPress}
+        />
+      );
+    }
+
+    return (
+      <TimerButton
+        color="#21BA45"
+        title="Start"
+        onPress={this.handleStartPress}
+      />
+    );
+  }
 
   render() {
     const { elapsed, title, project, onEditPress } = this.props;
@@ -34,7 +81,7 @@ export default class Timer extends React.Component {
             onPress={this.handleRemovePress}
           />
         </View>
-        <TimerButton color="#21BA45" title="Start" />
+        {this.renderActionButton()}
       </View>
     );
   }
